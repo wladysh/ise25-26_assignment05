@@ -92,6 +92,13 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add Given step for new scenario
+    @Given("the following POS exist:")
+    public void theFollowingPosExist(List<PosDto> posList) {
+        createdPosList = createPos(posList); // Используем TestUtils.createPos
+        assertThat(createdPosList).size().isEqualTo(posList.size());
+    }
+
+
 
     // When -----------------------------------------------------------------------
 
@@ -102,6 +109,23 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add When step for new scenario
+    @When("I update the description of {string} to {string}")
+    public void iUpdateTheDescriptionOfTo(String name, String newDescription) {
+        PosDto posToUpdate = createdPosList.stream()
+                .filter(p -> p.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("POS not found: " + name));
+
+        PosDto updatedDto = posToUpdate.toBuilder()
+                .description(newDescription)
+                .build();
+
+        updatedPos = updatePos(List.of(updatedDto)).get(0);
+
+    }
+
+
+
 
     // Then -----------------------------------------------------------------------
 
@@ -114,4 +138,15 @@ public class CucumberPosSteps {
     }
 
     // TODO: Add Then step for new scenario
+    @Then("the POS {string} should have description {string}")
+    public void thePosShouldHaveDescription(String name, String expectedDescription) {
+        PosDto retrieved = retrievePos().stream()
+                .filter(p -> p.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("POS not found: " + name));
+
+        assertThat(retrieved.description()).isEqualTo(expectedDescription);
+    }
+
+
 }

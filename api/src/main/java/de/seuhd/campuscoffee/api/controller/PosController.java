@@ -10,6 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import de.seuhd.campuscoffee.domain.model.Pos;
+import de.seuhd.campuscoffee.domain.ports.PosService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import de.seuhd.campuscoffee.domain.exceptions.PosNotFoundException;
+
 
 import java.net.URI;
 import java.util.List;
@@ -42,7 +49,19 @@ public class PosController {
         );
     }
 
-    // TODO: Implement a new GET endpoint that supports filtering POS by name, e.g., /filter?name=Schmelzpunkt
+
+    @GetMapping("/filter")
+    public ResponseEntity<PosDto> getByName(@RequestParam String name) throws PosNotFoundException {
+        Pos pos = posService.getByName(name);
+        return ResponseEntity.ok(posDtoMapper.fromDomain(pos));
+    }
+
+
+
+
+
+
+
 
     @PostMapping("")
     public ResponseEntity<PosDto> create(
